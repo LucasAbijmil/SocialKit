@@ -46,9 +46,9 @@ struct SharingContentDemo: View {
                             switch app {
                             case .instagram(let text, let isURL):
                                 if isURL {
-                                    openSocial.instagram(text: text)
-                                } else {
                                     openSocial.instagram(url: URL(string: text)!)
+                                } else {
+                                    openSocial.instagram(text: text)
                                 }
                             case .whatsApp(let text):
                                 openSocial.whatsApp(text: text)
@@ -83,10 +83,15 @@ struct SharingContentDemo: View {
         }
         .scrollBounceBehavior(.basedOnSize)
         .sheet(isPresented: $isShowingMessageCompose) {
-            MessageView(recipient: "", body: "") { _ in }
+            MessageView(recipient: "+33612345678", body: "") { isSent in
+                print("MessageView – is sent: \(isSent)")
+            }
         }
         .sheet(isPresented: $isShowingShare) {
-            ShareView(activityItems: [], { _ in })
+            ShareView(activityItems: [URL(staticString: "https://www.apple.com")]) { isShared in
+                print("ShareView – is shared: \(isShared)")
+            }
+            .presentationDetents([.medium])
         }
     }
 
