@@ -42,7 +42,7 @@ struct SharingContentDemo: View {
                     font: .system(size: 14, weight: .bold)) {
                         print("Copy Link!")
                     } onMessage: {
-                        isShowingMessageCompose = true
+                        isShowingMessageCompose = MessageView.canSendMessage
                     } onInstagram: {
                         if Bool.random() {
                             socialSharing.instagram(text: plainText)
@@ -77,6 +77,9 @@ struct SharingContentDemo: View {
             }
         }
         .scrollBounceBehavior(.basedOnSize)
+        .sheet(isPresented: $isShowingMessageCompose) {
+            MessageView(recipient: "", body: "") { _ in }
+        }
     }
 
     private func slider(title: String, value: Binding<CGFloat>, in range: ClosedRange<CGFloat>) -> some View {

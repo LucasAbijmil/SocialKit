@@ -88,7 +88,7 @@ public struct ContactsPicker<CustomContact: Identifiable, PermissionView: View>:
             if let phoneNumber = sendMessageSetup.selectedPhoneNumber,
                let contact = sendMessageSetup.contact,
                 MessageView.canSendMessage {
-                MessageView(recipient: phoneNumber, messageBody: sendMessageSetup.bodyMessage) { didSent in
+                MessageView(recipient: phoneNumber, body: sendMessageSetup.bodyMessage) { didSent in
                     self.sendMessageSetup.contact = nil
                     self.sendMessageSetup.selectedPhoneNumber = nil
                     if didSent { self.contactTappedAction(contact.contactResult, .messageSent) }
