@@ -9,7 +9,7 @@ import SwiftUI
 import SocialKit
 
 struct SharingContentDemo: View {
-    @Environment(\.socialSharing) private var socialSharing
+    @Environment(\.openSocial) private var openSocial
     @State private var socialButtonsCountPerRow = 4
     @State private var spacing: CGFloat = 16.0
     @State private var socialLabelSpacing: CGFloat = 4.0
@@ -21,14 +21,13 @@ struct SharingContentDemo: View {
     @State private var backgroundShapeStyle: Color = .gray.opacity(0.25)
     @State private var backgroundRadius: CGFloat = 8.0
     @State private var isShowingMessageCompose = false
-    private let plainText = "Hello World!"
-    private let formattedText = "**Hello World!**"
-    private let url = URL(staticString: "https://www.google.com")
+    @State private var isShowingShare = false
 
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
                 SharingView(
+                    sharing: .mocks,
                     socialButtonsCountPerRow: socialButtonsCountPerRow,
                     spacing: spacing,
                     socialLabelSpacing: socialLabelSpacing,
@@ -39,26 +38,32 @@ struct SharingContentDemo: View {
                     secondaryShapeStyle: secondaryShapeStyle,
                     backgroundShapeStyle: backgroundShapeStyle,
                     backgroundRadius: backgroundRadius,
-                    font: .system(size: 14, weight: .bold)) {
-                        print("Copy Link!")
-                    } onMessage: {
-                        isShowingMessageCompose = MessageView.canSendMessage
-                    } onInstagram: {
-                        if Bool.random() {
-                            socialSharing.instagram(text: plainText)
-                        } else {
-                            socialSharing.instagram(url: url)
+                    font: .system(size: 14, weight: .bold)) { sharing in
+                        switch sharing {
+                        case .clipboard:
+                            print("Copied to clipboard")
+                        case .social(let app):
+                            switch app {
+                            case .instagram(let text, let isURL):
+                                if isURL {
+                                    openSocial.instagram(text: text)
+                                } else {
+                                    openSocial.instagram(url: URL(string: text)!)
+                                }
+                            case .whatsApp(let text):
+                                openSocial.whatsApp(text: text)
+                            case .telegram(let text):
+                                openSocial.telegram(text: text)
+                            case .twitter(let text):
+                                openSocial.twitter(text: text)
+                            case .messenger(let url):
+                                openSocial.messenger(url: url)
+                            }
+                        case .message:
+                            isShowingMessageCompose = MessageView.canSendMessage
+                        case .other:
+                            isShowingShare = true
                         }
-                    } onWhatsApp: {
-                        socialSharing.whatsApp(text: Bool.random() ? plainText : formattedText)
-                    } onTelegram: {
-                        socialSharing.telegram(text: Bool.random() ? plainText : formattedText)
-                    } onTwitter: {
-                        socialSharing.twitter(text: plainText)
-                    } onMessenger: {
-                        socialSharing.messenger(url: url)
-                    } onMore: {
-                        // TODO:
                     }
                 Divider()
                 Group {

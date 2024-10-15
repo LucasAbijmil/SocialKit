@@ -16,7 +16,8 @@ public enum Sharing: Identifiable, Hashable {
     public var id: Self { self }
 }
 
-extension [Sharing] {
+#if DEBUG
+public extension [Sharing] {
     static var mocks: Self {
         return [
             .clipboard(title: "Copy Link", symbol: "link"),
@@ -30,3 +31,4 @@ extension [Sharing] {
         ]
     }
 }
+#endif
