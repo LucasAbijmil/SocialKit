@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SharingContentDemo: View {
-    @Environment(\.sharing) private var sharing
+    @Environment(\.socialSharing) private var socialSharing
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -23,8 +23,8 @@ struct SharingContentDemo: View {
         HStack(spacing: 16) {
             icon(.instagram)
             VStack(alignment: .leading, spacing: 12) {
-                Button("URL") { sharing.instagram(url: URL(string: "https://wwww.apple.com")!) }
-                Button("Plain text") { sharing.instagram(text: "Hello World") }
+                Button("URL") { socialSharing.instagram(url: URL(string: "https://wwww.apple.com")!) }
+                Button("Plain text") { socialSharing.instagram(text: "Hello World") }
             }
         }
     }
@@ -33,8 +33,8 @@ struct SharingContentDemo: View {
         HStack(spacing: 16) {
             icon(.whatsapp)
             VStack(alignment: .leading, spacing: 12) {
-                Button("Formatted text") { sharing.whatsApp(text: "**Hello World**") }
-                Button("Plain text") { sharing.whatsApp(text: "Hello World") }
+                Button("Formatted text") { socialSharing.whatsApp(text: "**Hello World**") }
+                Button("Plain text") { socialSharing.whatsApp(text: "Hello World") }
             }
         }
     }
@@ -43,8 +43,8 @@ struct SharingContentDemo: View {
         HStack(spacing: 16) {
             icon(.telegram)
             VStack(alignment: .leading, spacing: 12) {
-                Button("Formatted text") { sharing.telegram(text: "**Hello World**") }
-                Button("Plain text") { sharing.telegram(text: "Hello World") }
+                Button("Formatted text") { socialSharing.telegram(text: "**Hello World**") }
+                Button("Plain text") { socialSharing.telegram(text: "Hello World") }
             }
         }
     }
@@ -52,14 +52,14 @@ struct SharingContentDemo: View {
     private var twitter: some View {
         HStack(spacing: 16) {
             icon(.twitter)
-            Button("Plain text") { sharing.twitter(text: "Hello World") }
+            Button("Plain text") { socialSharing.twitter(text: "Hello World") }
         }
     }
 
     private var messenger: some View {
         HStack(spacing: 16) {
             icon(.messenger)
-            Button("URL") { sharing.messenger(url: URL(string: "https://www.apple.com")!) }
+            Button("URL") { socialSharing.messenger(url: URL(string: "https://www.apple.com")!) }
         }
     }
 

@@ -1,5 +1,5 @@
 //
-//  Sharing.swift
+//  SocialSharing.swift
 //  SocialKit
 //
 //  Created by Lucas Abijmil on 15/10/2024.
@@ -8,10 +8,10 @@
 import SwiftUI
 
 public extension EnvironmentValues {
-    @Entry var sharing = Sharing()
+    @Entry var socialSharing = SocialSharing()
 }
 
-public struct Sharing {
+public struct SocialSharing {
     public func instagram(url: URL) {
         UIApplication.shared.open(Social.url(for: .instagram(url.absoluteString, isURL: true)))
     }
