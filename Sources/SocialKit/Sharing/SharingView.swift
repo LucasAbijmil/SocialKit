@@ -8,6 +8,7 @@
 import SwiftUI
 
 public struct SharingView: View {
+    private let sharing: [Sharing]
     private let socialButtonsCountPerRow: Int
     private let spacing: CGFloat
     private let socialLabelSpacing: CGFloat
@@ -19,14 +20,7 @@ public struct SharingView: View {
     private let backgroundShapeStyle: any ShapeStyle
     private let backgroundRadius: CGFloat
     private let font: Font
-    private let onCopyLink: () async -> Void
-    private let onMessage: () async -> Void
-    private let onInstagram: () async -> Void
-    private let onWhatsApp: () async -> Void
-    private let onTelegram: () async -> Void
-    private let onTwitter: () async -> Void
-    private let onMessenger: () async -> Void
-    private let onMore: () async -> Void
+    private let onTap: (Sharing) async -> Void
     private var gridItemSize: CGFloat {
         let availableSpace = UIScreen.main.bounds.width - (Double(socialButtonsCountPerRow) - 1.0) - (margin * 2)
         return availableSpace / Double(socialButtonsCountPerRow)
@@ -36,6 +30,7 @@ public struct SharingView: View {
     }
 
     public init(
+        sharing: [Sharing],
         socialButtonsCountPerRow: Int = 4,
         spacing: Double = 16.0,
         socialLabelSpacing: Double = 4.0,
@@ -47,15 +42,9 @@ public struct SharingView: View {
         backgroundShapeStyle: any ShapeStyle = .quaternary,
         backgroundRadius: CGFloat = 8.0,
         font: Font = .system(size: 14, weight: .bold),
-        onCopyLink: @escaping () async -> Void,
-        onMessage: @escaping () async -> Void,
-        onInstagram: @escaping () async -> Void,
-        onWhatsApp: @escaping () async -> Void,
-        onTelegram: @escaping () async -> Void,
-        onTwitter: @escaping () async -> Void,
-        onMessenger: @escaping () async -> Void,
-        onMore: @escaping () async -> Void
+        onTap: @escaping (Sharing) async -> Void
     ) {
+        self.sharing = sharing
         self.socialButtonsCountPerRow = socialButtonsCountPerRow
         self.spacing = spacing
         self.socialLabelSpacing = socialLabelSpacing
@@ -67,26 +56,40 @@ public struct SharingView: View {
         self.backgroundShapeStyle = backgroundShapeStyle
         self.backgroundRadius = backgroundRadius
         self.font = font
-        self.onCopyLink = onCopyLink
-        self.onMessage = onMessage
-        self.onInstagram = onInstagram
-        self.onWhatsApp = onWhatsApp
-        self.onTelegram = onTelegram
-        self.onTwitter = onTwitter
-        self.onMessenger = onMessenger
-        self.onMore = onMore
+        self.onTap = onTap
     }
 
     public var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.fixed(gridItemSize), spacing: .zero), count: socialButtonsCountPerRow), spacing: spacing) {
-            custom(text: "Copy link", systemImage: "link", action: onCopyLink)
-            social(text: "Message", image: .message, action: onMessage)
-            social(text: "Instagram", image: .instagram, action: onMessage)
-            social(text: "WhatsApp", image: .whatsApp, action: onWhatsApp)
-            social(text: "Telegram", image: .telegram, action: onTelegram)
-            social(text: "Twitter", image: .twitter, action: onTwitter)
-            social(text: "Messenger", image: .messenger, action: onMessenger)
-            custom(text: "More", systemImage: "ellipsis", action: onMore)
+            ForEach(sharing) { sharing in
+                Button {
+                    Task {
+                        await onTap(sharing)
+                    }
+                } label: {
+                    switch sharing {
+                    case let .clipboard(title, symbol):
+                        custom(text: title, systemImage: symbol)
+                    case let .social(social):
+                        switch social {
+                        case .instagram:
+                            app(text: "Instagram", image: .instagram)
+                        case .whatsApp:
+                            app(text: "WhatsApp", image: .whatsApp)
+                        case .telegram:
+                            app(text: "Telegram", image: .telegram)
+                        case .twitter:
+                            app(text: "Twitter", image: .twitter)
+                        case .messenger:
+                            app(text: "Messenger", image: .messenger)
+                        }
+                    case .message(let title):
+                        app(text: title, image: .message)
+                    case let .other(title, symbol):
+                        custom(text: title, systemImage: symbol)
+                    }
+                }
+            }
         }
         .lineLimit(1)
         .padding(.vertical, margin)
@@ -95,50 +98,38 @@ public struct SharingView: View {
         .padding(.horizontal, margin)
     }
 
-    private func custom(text: String, systemImage: String, action: @escaping () async -> Void) -> some View {
-        Button {
-            Task {
-                await action()
+    private func custom(text: String, systemImage: String) -> some View {
+        VStack(spacing: socialLabelSpacing) {
+            Image(systemName: systemImage)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(socialIconFrame - 16)
+                .frame(socialIconFrame)
+                .background(AnyShapeStyle(secondaryShapeStyle))
+                .clipShape(.rect(cornerRadius: socialRadius))
+            if !isSocialLabelHidden {
+                Text(text)
+                    .font(font)
             }
-        } label: {
-            VStack(spacing: socialLabelSpacing) {
-                Image(systemName: systemImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(socialIconFrame - 16)
-                    .frame(socialIconFrame)
-                    .background(AnyShapeStyle(secondaryShapeStyle))
-                    .clipShape(.rect(cornerRadius: socialRadius))
-                if !isSocialLabelHidden {
-                    Text(text)
-                        .font(font)
-                }
-            }
-            .foregroundStyle(AnyShapeStyle(primaryShapeStyle))
-            .frame(maxWidth: .infinity)
         }
+        .foregroundStyle(AnyShapeStyle(primaryShapeStyle))
+        .frame(maxWidth: .infinity)
     }
 
-    private func social(text: String, image: ImageResource, action: @escaping () async -> Void) -> some View {
-        Button {
-            Task {
-                await action()
+    private func app(text: String, image: ImageResource) -> some View {
+        VStack(spacing: socialLabelSpacing) {
+            Image(image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(socialIconFrame)
+                .clipShape(.rect(cornerRadius: socialRadius))
+            if !isSocialLabelHidden {
+                Text(text)
+                    .font(font)
             }
-        } label: {
-            VStack(spacing: socialLabelSpacing) {
-                Image(image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(socialIconFrame)
-                    .clipShape(.rect(cornerRadius: socialRadius))
-                if !isSocialLabelHidden {
-                    Text(text)
-                        .font(font)
-                }
-            }
-            .foregroundStyle(AnyShapeStyle(primaryShapeStyle))
-            .frame(maxWidth: .infinity)
         }
+        .foregroundStyle(AnyShapeStyle(primaryShapeStyle))
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -151,5 +142,5 @@ private extension View {
 }
 
 #Preview {
-    SharingView(onCopyLink: {}, onMessage: {}, onInstagram: {}, onWhatsApp: {}, onTelegram: {}, onTwitter: {}, onMessenger: {}, onMore: {})
+    SharingView(sharing: .mocks, onTap: { _ in })
 }

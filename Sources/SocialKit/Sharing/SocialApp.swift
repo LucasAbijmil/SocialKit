@@ -1,5 +1,5 @@
 //
-//  Social.swift
+//  SocialApp.swift
 //  SocialKit
 //
 //  Created by Lucas Abijmil on 15/10/2024.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Social {
+public enum SocialApp: Hashable {
     case instagram(String, isURL: Bool) // DM only, for stories check this (https://gist.github.com/kunofellasleep/e160c64ecea64441ffee0a6a3e18f685)
     case whatsApp(String) // Accept WhatsApp text formatting
     case telegram(String) // Accept Telegram text formatting
@@ -44,7 +44,7 @@ enum Social {
         }
     }
 
-    static func url(for social: Social) -> URL {
+    static func url(for social: SocialApp) -> URL {
         switch social {
         case .instagram(let string, _), .whatsApp(let string), .telegram(let string), .twitter(let string):
             return URL(string: social.baseURL + social.path + string)!
