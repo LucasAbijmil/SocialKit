@@ -85,6 +85,9 @@ struct SharingContentDemo: View {
         .sheet(isPresented: $isShowingMessageCompose) {
             MessageView(recipient: "", body: "") { _ in }
         }
+        .sheet(isPresented: $isShowingShare) {
+            ShareView(activityItems: [], { _ in })
+        }
     }
 
     private func slider(title: String, value: Binding<CGFloat>, in range: ClosedRange<CGFloat>) -> some View {

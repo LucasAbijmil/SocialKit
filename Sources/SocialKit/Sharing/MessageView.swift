@@ -16,24 +16,24 @@ public struct MessageView: UIViewControllerRepresentable {
     }
     private let recipients: [String]
     private let body: String?
-    private let completion: (Bool) async -> Void
+    private let completion: ((Bool) async -> Void)?
 
-    public init(recipient: String, body: String? = nil, _ completion: @escaping (Bool) async -> Void) {
+    public init(recipient: String, body: String? = nil, _ completion: ((Bool) async -> Void)? = nil) {
         self.recipients = [recipient]
         self.body = body
         self.completion = completion
     }
 
-    public init(recipients: [String], body: String? = nil, _ completion: @escaping (Bool) async -> Void) {
+    public init(recipients: [String], body: String? = nil, _ completion: ((Bool) async -> Void)? = nil) {
         self.recipients = recipients
         self.body = body
         self.completion = completion
     }
 
     public final class Coordinator: NSObject, @preconcurrency MFMessageComposeViewControllerDelegate {
-        var completionResult: (Bool) async -> Void
+        private let completionResult: ((Bool) async -> Void)?
 
-        init(completionResult: @escaping (Bool) async -> Void) {
+        init(completionResult: ((Bool) async -> Void)?) {
             self.completionResult = completionResult
         }
         
@@ -41,7 +41,7 @@ public struct MessageView: UIViewControllerRepresentable {
         public func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
             controller.dismiss(animated: true, completion: nil)
             Task {
-                await completionResult(result == .sent)
+                await completionResult?(result == .sent)
             }
         }
     }
