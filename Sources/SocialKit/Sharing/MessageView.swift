@@ -1,13 +1,11 @@
 //
 //  MessageView.swift
-//  Drop
+//  SocialKit
 //
-//  Created by Michel-André Chirita on 10/04/2024.
+//  Created by Lucas Abijmil on 15/10/2024.
 //
 
-import Foundation
 import SwiftUI
-import UIKit
 import MessageUI
 
 public struct MessageView: UIViewControllerRepresentable {
