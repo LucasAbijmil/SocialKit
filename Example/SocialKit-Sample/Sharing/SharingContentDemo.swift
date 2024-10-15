@@ -42,7 +42,10 @@ struct SharingContentDemo: View {
     private var telegram: some View {
         HStack(spacing: 16) {
             icon(.telegram)
-            Button("Plain text") { sharing.telegram(text: "Hello World") }
+            VStack(alignment: .leading, spacing: 12) {
+                Button("Formatted text") { sharing.telegram(text: "**Hello World**") }
+                Button("Plain text") { sharing.telegram(text: "Hello World") }
+            }
         }
     }
 
