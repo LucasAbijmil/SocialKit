@@ -55,12 +55,11 @@ struct ContentView: View {
 
                 Section("Share") {
                     NavigationLink {
-                        ShareContentDemo()
+                        SharingContentDemo()
                     } label: {
                         Text("ShareContent")
                     }
                 }
-                .disabled(true)
             }
         }
     }
