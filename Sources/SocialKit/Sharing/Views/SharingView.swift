@@ -129,15 +129,16 @@ public struct SharingView: View {
                 await completion(.message(isSent: isSent))
             }
         }
-//        .sheet(isPresented: $shareComposer.isActive) {
-//            if let
-//            ShareView(activityItemSource: shareComposer.activityItemSource, applicationActivities: shareComposer.applicationActivities) { isShared in
-//                await completion(.other(isShared: isShared))
-//            }
-//        }
         .sheet(item: $shareComposer.activityItemSource) { activityItemSource in
-            ShareView(activityItemSource: activityItemSource, applicationActivities: shareComposer.applicationActivities) { isShared in
-                await completion(.other(isShared: isShared))
+            if #available(iOS 16.0, *) {
+                ShareView(activityItemSource: activityItemSource, applicationActivities: shareComposer.applicationActivities) { isShared in
+                    await completion(.other(isShared: isShared))
+                }
+                .presentationDetents([.medium])
+            } else {
+                ShareView(activityItemSource: activityItemSource, applicationActivities: shareComposer.applicationActivities) { isShared in
+                    await completion(.other(isShared: isShared))
+                }
             }
         }
     }
@@ -185,6 +186,6 @@ private extension View {
     }
 }
 
-//#Preview {
-//    SharingView(sharing: .mocks, onTap: { _ in })
-//}
+#Preview {
+    SharingView(sharing: .mocks, completion: { _ in })
+}

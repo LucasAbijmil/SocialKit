@@ -13,7 +13,7 @@ public final class ActivityItemSource: NSObject, UIActivityItemSource, Identifia
     let icon: UIImage?
     let message: String?
 
-    public init(title: String, url: URL, icon: UIImage? = nil, message: String? = nil) {
+    public init(title: String, url: URL, icon: UIImage? = .appIcon, message: String? = nil) {
         self.title = title
         self.url = url
         self.icon = icon

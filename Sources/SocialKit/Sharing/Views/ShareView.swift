@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ShareView: UIViewControllerRepresentable {
-    private let activityItemsSource: [ActivityItemSource]
+    private let activityItemSource: ActivityItemSource
     private let applicationActivities: [UIActivity]?
     private let completion: ((Bool) async -> Void)?
 
@@ -17,13 +17,13 @@ struct ShareView: UIViewControllerRepresentable {
         applicationActivities: [UIActivity]? = nil,
         _ completion: ((Bool) async -> Void)?
     ) {
-        self.activityItemsSource = [activityItemSource]
+        self.activityItemSource = activityItemSource
         self.applicationActivities = applicationActivities
         self.completion = completion
     }
 
     func makeUIViewController(context: Context) -> UIActivityViewController {
-        let viewController = UIActivityViewController(activityItemsSource: activityItemsSource, applicationActivities: applicationActivities)
+        let viewController = UIActivityViewController(activityItemSource: activityItemSource, applicationActivities: applicationActivities)
         viewController.completionWithItemsHandler = { _, isCompleted, _, _ in
             Task {
                 await completion?(isCompleted)
@@ -37,7 +37,7 @@ struct ShareView: UIViewControllerRepresentable {
 
 private extension UIActivityViewController {
 
-    convenience init(activityItemsSource: [ActivityItemSource], applicationActivities: [UIActivity]?) {
-        self.init(activityItems: activityItemsSource, applicationActivities: applicationActivities)
+    convenience init(activityItemSource: ActivityItemSource, applicationActivities: [UIActivity]?) {
+        self.init(activityItems: [activityItemSource, activityItemSource.url], applicationActivities: applicationActivities)
     }
 }
