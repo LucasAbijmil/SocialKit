@@ -8,6 +8,18 @@
 import SwiftUI
 
 public struct SharingView: View {
+    struct MessageComposer {
+        var isActive: Bool = false
+        var recipient: String?
+        var body: String?
+    }
+    struct ShareComposer {
+        var activityItemSource: ActivityItemSource?
+        var applicationActivities: [UIActivity]?
+    }
+    @Environment(\.openSocial) private var openSocial
+    @State private var messageComposer = MessageComposer()
+    @State private var shareComposer = ShareComposer()
     private let sharing: [Sharing]
     private let socialButtonsCountPerRow: Int
     private let spacing: CGFloat
@@ -20,7 +32,7 @@ public struct SharingView: View {
     private let backgroundShapeStyle: any ShapeStyle
     private let backgroundRadius: CGFloat
     private let font: Font
-    private let onTap: (Sharing) async -> Void
+    private let completion: (SharingResult) async -> Void
     private var gridItemSize: CGFloat {
         let availableSpace = UIScreen.main.bounds.width - (Double(socialButtonsCountPerRow) - 1.0) - (margin * 2)
         return availableSpace / Double(socialButtonsCountPerRow)
@@ -42,7 +54,7 @@ public struct SharingView: View {
         backgroundShapeStyle: any ShapeStyle = .quaternary,
         backgroundRadius: CGFloat = 8.0,
         font: Font = .system(size: 14, weight: .bold),
-        onTap: @escaping (Sharing) async -> Void
+        completion: @escaping (SharingResult) async -> Void
     ) {
         self.sharing = sharing
         self.socialButtonsCountPerRow = socialButtonsCountPerRow
@@ -56,19 +68,35 @@ public struct SharingView: View {
         self.backgroundShapeStyle = backgroundShapeStyle
         self.backgroundRadius = backgroundRadius
         self.font = font
-        self.onTap = onTap
+        self.completion = completion
     }
 
     public var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.fixed(gridItemSize), spacing: .zero), count: socialButtonsCountPerRow), spacing: spacing) {
             ForEach(sharing) { sharing in
                 Button {
-                    Task {
-                        await onTap(sharing)
+                    switch sharing {
+                    case let .clipboard(_, _, text):
+                        UIPasteboard.general.string = text
+                        Task {
+                            await completion(.clipboard)
+                        }
+                    case let .social(app):
+                        openSocial(app)
+                        Task {
+                            await completion(.social(app))
+                        }
+                    case let .message(_, recipient, body):
+                        messageComposer.isActive = true
+                        messageComposer.recipient = recipient
+                        messageComposer.body = body
+                    case let .other(_, _, activityItemSource, applicationActivities):
+                        shareComposer.activityItemSource = activityItemSource
+                        shareComposer.applicationActivities = applicationActivities
                     }
                 } label: {
                     switch sharing {
-                    case let .clipboard(title, symbol):
+                    case let .clipboard(title, symbol, _):
                         custom(text: title, systemImage: symbol)
                     case let .social(social):
                         switch social {
@@ -83,9 +111,9 @@ public struct SharingView: View {
                         case .messenger:
                             app(text: "Messenger", image: .messenger)
                         }
-                    case .message(let title):
+                    case let .message(title, _, _):
                         app(text: title, image: .message)
-                    case let .other(title, symbol):
+                    case let .other(title, symbol, _, _):
                         custom(text: title, systemImage: symbol)
                     }
                 }
@@ -96,6 +124,22 @@ public struct SharingView: View {
         .background(AnyShapeStyle(backgroundShapeStyle))
         .clipShape(.rect(cornerRadius: backgroundRadius))
         .padding(.horizontal, margin)
+        .sheet(isPresented: $messageComposer.isActive) {
+            MessageView(recipient: messageComposer.recipient, body: messageComposer.recipient) { isSent in
+                await completion(.message(isSent: isSent))
+            }
+        }
+//        .sheet(isPresented: $shareComposer.isActive) {
+//            if let
+//            ShareView(activityItemSource: shareComposer.activityItemSource, applicationActivities: shareComposer.applicationActivities) { isShared in
+//                await completion(.other(isShared: isShared))
+//            }
+//        }
+        .sheet(item: $shareComposer.activityItemSource) { activityItemSource in
+            ShareView(activityItemSource: activityItemSource, applicationActivities: shareComposer.applicationActivities) { isShared in
+                await completion(.other(isShared: isShared))
+            }
+        }
     }
 
     private func custom(text: String, systemImage: String) -> some View {
@@ -141,6 +185,6 @@ private extension View {
     }
 }
 
-#Preview {
-    SharingView(sharing: .mocks, onTap: { _ in })
-}
+//#Preview {
+//    SharingView(sharing: .mocks, onTap: { _ in })
+//}

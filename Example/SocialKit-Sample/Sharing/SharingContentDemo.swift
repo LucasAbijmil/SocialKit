@@ -9,7 +9,6 @@ import SwiftUI
 import SocialKit
 
 struct SharingContentDemo: View {
-    @Environment(\.openSocial) private var openSocial
     @State private var socialButtonsCountPerRow = 4
     @State private var spacing: CGFloat = 16.0
     @State private var socialLabelSpacing: CGFloat = 4.0
@@ -20,8 +19,6 @@ struct SharingContentDemo: View {
     @State private var secondaryShapeStyle: Color = .gray.opacity(0.3)
     @State private var backgroundShapeStyle: Color = .gray.opacity(0.25)
     @State private var backgroundRadius: CGFloat = 8.0
-    @State private var isShowingMessageCompose = false
-    @State private var isShowingShare = false
 
     var body: some View {
         ScrollView {
@@ -38,33 +35,19 @@ struct SharingContentDemo: View {
                     secondaryShapeStyle: secondaryShapeStyle,
                     backgroundShapeStyle: backgroundShapeStyle,
                     backgroundRadius: backgroundRadius,
-                    font: .system(size: 14, weight: .bold)) { sharing in
-                        switch sharing {
-                        case .clipboard:
-                            print("Copied to clipboard")
-                        case .social(let app):
-                            switch app {
-                            case .instagram(let text, let isURL):
-                                if isURL {
-                                    openSocial.instagram(url: URL(string: text)!)
-                                } else {
-                                    openSocial.instagram(text: text)
-                                }
-                            case .whatsApp(let text):
-                                openSocial.whatsApp(text: text)
-                            case .telegram(let text):
-                                openSocial.telegram(text: text)
-                            case .twitter(let text):
-                                openSocial.twitter(text: text)
-                            case .messenger(let url):
-                                openSocial.messenger(url: url)
-                            }
-                        case .message:
-                            isShowingMessageCompose = MessageView.canSendMessage
-                        case .other:
-                            isShowingShare = true
-                        }
+                    font: .system(size: 14, weight: .bold)
+                ) { sharingResult in
+                    switch sharingResult {
+                    case .clipboard:
+                        print("Sharing Result: Clipboard")
+                    case .social(let socialApp):
+                        print("Sharing Result: \(socialApp)")
+                    case .message(let isSent):
+                        print("Sharing Result: Message – is sent: \(isSent)")
+                    case .other(let isShared):
+                        print("Sharing Result: Other – is shared: \(isShared)")
                     }
+                }
                 Divider()
                 Group {
                     Stepper("socialButtonsCountPerRow: \(socialButtonsCountPerRow)", value: $socialButtonsCountPerRow)
@@ -82,17 +65,6 @@ struct SharingContentDemo: View {
             }
         }
         .scrollBounceBehavior(.basedOnSize)
-        .sheet(isPresented: $isShowingMessageCompose) {
-            MessageView(recipient: "+33612345678", body: "") { isSent in
-                print("MessageView – is sent: \(isSent)")
-            }
-        }
-        .sheet(isPresented: $isShowingShare) {
-            ShareView(activityItems: [URL(staticString: "https://www.apple.com")]) { isShared in
-                print("ShareView – is shared: \(isShared)")
-            }
-            .presentationDetents([.medium])
-        }
     }
 
     private func slider(title: String, value: Binding<CGFloat>, in range: ClosedRange<CGFloat>) -> some View {
