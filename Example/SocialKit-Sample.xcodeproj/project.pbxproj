@@ -11,6 +11,9 @@
 		044795F52CBD2CF100853B92 /* PermissionsKit in Frameworks */ = {isa = PBXBuildFile; productRef = 044795F42CBD2CF100853B92 /* PermissionsKit */; };
 		044796012CBD336B00853B92 /* SocialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 044796002CBD336B00853B92 /* SocialKit */; };
 		044796042CBD5DC600853B92 /* SocialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 044796032CBD5DC600853B92 /* SocialKit */; };
+		04FA09152CBE82210027ED73 /* SocialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 04FA09142CBE82210027ED73 /* SocialKit */; };
+		04FA09182CBEA6830027ED73 /* SocialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 04FA09172CBEA6830027ED73 /* SocialKit */; };
+		04FA092E2CC023D50027ED73 /* SocialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 04FA092D2CC023D50027ED73 /* SocialKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,7 +33,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04FA09152CBE82210027ED73 /* SocialKit in Frameworks */,
 				044796042CBD5DC600853B92 /* SocialKit in Frameworks */,
+				04FA092E2CC023D50027ED73 /* SocialKit in Frameworks */,
+				04FA09182CBEA6830027ED73 /* SocialKit in Frameworks */,
 				044795F52CBD2CF100853B92 /* PermissionsKit in Frameworks */,
 				044795EA2CBD089D00853B92 /* SocialKit in Frameworks */,
 				044796012CBD336B00853B92 /* SocialKit in Frameworks */,
@@ -80,6 +86,9 @@
 				044795F42CBD2CF100853B92 /* PermissionsKit */,
 				044796002CBD336B00853B92 /* SocialKit */,
 				044796032CBD5DC600853B92 /* SocialKit */,
+				04FA09142CBE82210027ED73 /* SocialKit */,
+				04FA09172CBEA6830027ED73 /* SocialKit */,
+				04FA092D2CC023D50027ED73 /* SocialKit */,
 			);
 			productName = "SocialKit-Sample";
 			productReference = 044795CE2CBD085800853B92 /* SocialKit-Sample.app */;
@@ -111,7 +120,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				044795F32CBD2CF100853B92 /* XCRemoteSwiftPackageReference "PermissionsKit" */,
-				044796022CBD5DC600853B92 /* XCLocalSwiftPackageReference "../../SocialKit" */,
+				04FA092C2CC023D50027ED73 /* XCLocalSwiftPackageReference "../../SocialKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 044795CF2CBD085800853B92 /* Products */;
@@ -353,7 +362,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		044796022CBD5DC600853B92 /* XCLocalSwiftPackageReference "../../SocialKit" */ = {
+		04FA092C2CC023D50027ED73 /* XCLocalSwiftPackageReference "../../SocialKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../SocialKit;
 		};
@@ -385,6 +394,18 @@
 			productName = SocialKit;
 		};
 		044796032CBD5DC600853B92 /* SocialKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SocialKit;
+		};
+		04FA09142CBE82210027ED73 /* SocialKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SocialKit;
+		};
+		04FA09172CBEA6830027ED73 /* SocialKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SocialKit;
+		};
+		04FA092D2CC023D50027ED73 /* SocialKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SocialKit;
 		};

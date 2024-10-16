@@ -51,7 +51,6 @@ struct ContentView: View {
                         Text("AppRating")
                     }
                 }
-                .disabled(true)
 
                 Section("Share") {
                     NavigationLink {
