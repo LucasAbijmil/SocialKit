@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Foundation
 
 public enum Sharing: Identifiable, Hashable {
     case clipboard(title: String, symbol: String, text: String)

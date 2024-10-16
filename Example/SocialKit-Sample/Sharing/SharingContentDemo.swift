@@ -74,13 +74,6 @@ struct SharingContentDemo: View {
     }
 }
 
-private extension URL {
-
-    init(staticString: String) {
-        self.init(string: "\(staticString)")!
-    }
-}
-
 #Preview {
     SharingContentDemo()
 }
