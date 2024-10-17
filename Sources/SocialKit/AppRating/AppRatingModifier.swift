@@ -20,6 +20,7 @@ struct AppRatingModifier: ViewModifier {
         self.style = style
         self.closeAction = closeAction
 
+        // FIXME: it should be placed somewhere to safeguard the appId is set before, as it would be quite easy to forget and not obvious to catch the issue. Find the best way to do.
 //        if service?.configuration.appId == nil {
 //            fatalError("Expected a valid AppId")
 //        }
@@ -47,6 +48,7 @@ public extension View {
     /// Should be applied to the screen root view
     /// - Parameter service: provide AppRatingService singleton to condition the display on accomplished criterias
     /// - Parameter style: choose to display a pre-prompt and customize its content
+    /// - Parameter closeAction: callback closure called when the prompt is closed with the outcome enum
     func showAppRating(ifDeterminedBy service: AppRatingService? = nil,
                        style: AppRatingPrePromptStyle? = nil,
                        closeAction: ((AppRatingPrompt.Outcome)->Void)? = nil) -> some View {

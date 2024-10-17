@@ -97,7 +97,7 @@ public struct SharingView: View {
                     }
                 } label: {
                     switch sharing {
-                    case let .clipboard(title, symbol, truc):
+                    case let .clipboard(title, symbol, _):
                         custom(text: title, systemImage: symbol)
                     case let .social(social):
                         switch social {
