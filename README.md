@@ -15,15 +15,20 @@ Fetching user's' address book local contacts and built-in customizable screen fo
 
 ## Features
 
-- [x] Service for safely fetching local address book contacts
-- [x] BuiltIn SwiftUI customizable Contacts Picker
-- [x] BuiltIn send text message
-- [x] Include your own custom user to the ContactPicker 
-- [x] Enrich your custom users with address book matching data 
-- [x] Include permission pre-prompt and reoptin 
-- [x] Set custom CacheService to improve fetching performance
-- [x] Set custom UploadContactsService to sync the address book contacts to your backend
-- [ ] Write sample with cache
+- [x] Accessing address book contacts
+  - [x] Service for safely fetching local address book contacts
+  - [x] BuiltIn SwiftUI customizable Contacts Picker
+  - [x] BuiltIn send text message
+  - [x] Include your own custom user to the ContactPicker 
+  - [x] Enrich your custom users with address book matching data 
+  - [x] Include permission pre-prompt and reoptin 
+  - [x] Set custom CacheService to improve fetching performance
+  - [x] Set custom UploadContactsService to sync the address book contacts to your backend
+  - [ ] Write sample with cache
+- [x] Social sharing
+  - [x] Customizable SwiftUI sheet
+  - [x] Copy to clipboard, by message, native sheet or to social networks
+  - [x] Networks implemented: Instagram, WhatsApp, Telegram, Twitter, Messenger
 
 ## Requirements
 
@@ -43,7 +48,7 @@ dependencies: [
 
 ## Usage
 
-### Preview
+### ContactsPicker
 
 __BuiltIn SwiftUI View__
 ```swift
@@ -64,6 +69,23 @@ do {
 }
 ```
 
+### Social Sharing sheet
+```swift
+  let sharings: [Sharing] = [.clipboard(title: "Amazing title", symbol: "rocket", text: "amazing text"),
+                             .social(app: .instagram("Amazing text", isURL: false))]
+  SharingView(sharing: sharings) { result in
+      switch result {
+      case .clipboard:
+          print("Content shared to clipboard")
+      case .social(let socialApp):
+          print("Content shared to \(socialApp)")
+      case .message(let isSent):
+          print("Message sent: \(isSent)")
+      case .other(let isShared):
+          print("Other: \(isShared)")
+      }
+  }
+```
 
 For more details you may take a look at the sample project.
 
