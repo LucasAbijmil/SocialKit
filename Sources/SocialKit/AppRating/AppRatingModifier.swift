@@ -9,30 +9,54 @@ import SwiftUI
 
 struct AppRatingModifier: ViewModifier {
 
-    private let service: AppRatingService?
-    init(service: AppRatingService? = nil) {
-        self.service = service
+    @ObservedObject private var service: AppRatingService
+    private let style: AppRatingPrePromptStyle?
+    private let closeAction: ((AppRatingPrompt.Outcome)->Void)?
+
+    init(service: AppRatingService?,
+         style: AppRatingPrePromptStyle?,
+         closeAction: ((AppRatingPrompt.Outcome)->Void)? = nil) {
+        self.service = service ?? AppRatingService(forcePresentPrompt: true)
+        self.style = style
+        self.closeAction = closeAction
+
+        // FIXME: it should be placed somewhere to safeguard the appId is set before, as it would be quite easy to forget and not obvious to catch the issue. Find the best way to do.
+//        if service?.configuration.appId == nil {
+//            fatalError("Expected a valid AppId")
+//        }
     }
 
     func body(content: Content) -> some View {
-        if service == nil || service?.showPrompt == true {
-            content
-                .overlay {
-                    AppRatingPrompt(service: service)
+        content
+            .overlay {
+                Group {
+                    if service.presentPrompt == true {
+                        AppRatingPrompt(service: service,
+                                        style: style,
+                                        closeAction: closeAction)
+                            .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                    }
                 }
-        } else {
-            content
-        }
+                .animation(.easeOut(duration: 0.4), value: service.presentPrompt)
+            }
     }
 }
 
 public extension View {
-    func showAppRatingIfNeeded(service: AppRatingService? = nil) -> some View {
-        modifier(AppRatingModifier(service: service))
+    
+    /// Shows the app rating flow
+    /// Should be applied to the screen root view
+    /// - Parameter service: provide AppRatingService singleton to condition the display on accomplished criterias
+    /// - Parameter style: choose to display a pre-prompt and customize its content
+    /// - Parameter closeAction: callback closure called when the prompt is closed with the outcome enum
+    func showAppRating(ifDeterminedBy service: AppRatingService? = nil,
+                       style: AppRatingPrePromptStyle? = nil,
+                       closeAction: ((AppRatingPrompt.Outcome)->Void)? = nil) -> some View {
+        modifier(AppRatingModifier(service: service, style: style, closeAction: closeAction))
     }
 }
 
 #Preview {
     Rectangle()
-        .showAppRatingIfNeeded()
+        .showAppRating()
 }

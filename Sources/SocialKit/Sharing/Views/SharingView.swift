@@ -20,7 +20,7 @@ public struct SharingView: View {
     @Environment(\.openSocial) private var openSocial
     @State private var messageComposer = MessageComposer()
     @State private var shareComposer = ShareComposer()
-    private let sharing: [Sharing]
+    private let sharings: [Sharing]
     private let socialButtonsCountPerRow: Int
     private let spacing: CGFloat
     private let socialLabelSpacing: CGFloat
@@ -56,7 +56,7 @@ public struct SharingView: View {
         font: Font = .system(size: 14, weight: .bold),
         completion: @escaping (SharingResult) async -> Void
     ) {
-        self.sharing = sharing
+        self.sharings = sharing
         self.socialButtonsCountPerRow = socialButtonsCountPerRow
         self.spacing = spacing
         self.socialLabelSpacing = socialLabelSpacing
@@ -73,7 +73,7 @@ public struct SharingView: View {
 
     public var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.fixed(gridItemSize), spacing: .zero), count: socialButtonsCountPerRow), spacing: spacing) {
-            ForEach(sharing) { sharing in
+            ForEach(sharings) { sharing in
                 Button {
                     switch sharing {
                     case let .clipboard(_, _, text):
@@ -87,6 +87,7 @@ public struct SharingView: View {
                             await completion(.social(app))
                         }
                     case let .message(_, recipient, body):
+                        guard MessageView.canSendMessage else { return }
                         messageComposer.isActive = true
                         messageComposer.recipient = recipient
                         messageComposer.body = body

@@ -8,8 +8,15 @@
 import Foundation
 
 public enum AppRatingEvents: String {
-    case rate
+
+    /// Triggered by the app
     case appLaunch
     case completedMajorEvent
     case completedMinorEvent
+
+    /// Triggered by the prompt
+    case promptDisplay
+    case rateWithNativePrompt
+    case rateInAppStore
+
 }

@@ -9,18 +9,42 @@ import Foundation
 
 public struct AppRatingConfiguration {
 
-    let minDaysInterval: Int
-    let minAppLaunchEventsInterval: Int
-    let minMajorEventsInterval: Int
-    let minMinorEventsInterval: Int
+    let appId: String?
+    let prePromptStyle: AppRatingPrePromptStyle
+    let minAppLaunchEvents: Int
+    let minMajorEvents: Int
+    let minMinorEvents: Int
+    let minPromptDisplayDaysInterval: Int
+    let minReRateDaysInterval: Int
+    let thisAppVersion: String
 
-    public init(minDaysInterval: Int = 7,
-                minAppLaunchEventsInterval: Int = 3,
-                minMajorEventsInterval: Int = 3,
-                minMinorEventsInterval: Int = 3) {
-        self.minDaysInterval = minDaysInterval
-        self.minAppLaunchEventsInterval = minAppLaunchEventsInterval
-        self.minMajorEventsInterval = minMajorEventsInterval
-        self.minMinorEventsInterval = minMinorEventsInterval
+    public init(appId: String? = nil,
+                prePromptStyle: AppRatingPrePromptStyle = .classic(withFeedback: .none),
+                minAppLaunchEvents: Int = 3,
+                minMajorEvents: Int = 10,
+                minMinorEvents: Int = 20,
+                minPromptDisplayDaysInterval: Int = 7,
+                minReRateDaysInterval: Int = 100,
+                thisAppVersion: String = "") {
+        self.appId = appId
+        self.prePromptStyle = prePromptStyle
+        self.minAppLaunchEvents = minAppLaunchEvents
+        self.minMajorEvents = minMajorEvents
+        self.minMinorEvents = minMinorEvents
+        self.minPromptDisplayDaysInterval = minPromptDisplayDaysInterval
+        self.minReRateDaysInterval = minReRateDaysInterval
+        self.thisAppVersion = thisAppVersion
+    }
+}
+
+public enum AppRatingPrePromptStyle {
+    case noPreprompt
+    case classic(withFeedback: FeedbackStyle)
+
+    public enum FeedbackStyle {
+        case none
+        case message(completion: MessageCompletion)
+
+        public typealias MessageCompletion = (String)->Void
     }
 }
